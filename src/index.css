@@ -89,7 +89,7 @@ input[type="text"], input[type="password"], input[type="email"], textarea{
 }
 
 .btn--main{
-  background-color: rgba(219,26,90,1);
+  background-color: var(--themeColorMain);
   color: #fff;
 }
 

@@ -10,10 +10,12 @@ import { Trash2 } from "react-feather";
 const Room = () => {
   const [messages, setMessages] = useState([]);
   const [messageBody, setMessageBody] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // fetches the messages
     getMessages();
+    setLoading(false);
 
     const unsubscribe = client.subscribe(
       [
@@ -21,14 +23,14 @@ const Room = () => {
       ],
       (response) => {
         // Callback will be executed on changes for documents A and all files.
-        console.log("REAL TIME: ", response);
+        // console.log("REAL TIME: ", response);
 
         if (
           response.events.includes(
             "databases.*.collections.*.documents.*.create",
           )
         ) {
-          console.log("A MESSAGE WAS CREATED: ");
+          // console.log("A MESSAGE WAS CREATED: ");
           setMessages((prevState) => [response.payload, ...prevState]);
         }
 
@@ -37,7 +39,7 @@ const Room = () => {
             "databases.*.collections.*.documents.*.delete",
           )
         ) {
-          console.log("A MESSAGE WAS DELETED!!!: ");
+          // console.log("A MESSAGE WAS DELETED!!!: ");
           setMessages((prevState) =>
             prevState.filter((message) => message.$id !== response.payload.$id),
           );
@@ -62,7 +64,7 @@ const Room = () => {
       ID.unique(),
       payload,
     );
-    console.log("Created!", response);
+    // console.log("Created!", response);
 
     // Updates the state of the messages
     // setMessages((prevState) => [response, ...messages]);
@@ -77,7 +79,7 @@ const Room = () => {
       COLLECTION_ID_MESSAGES,
       [Query.orderDesc("$createdAt"), Query.limit(10)],
     );
-    console.log("RESPONSE:", response);
+    // console.log("RESPONSE:", response);
 
     // Sets the message body
     setMessages(response.documents);
@@ -116,27 +118,31 @@ const Room = () => {
           </div>
         </form>
 
-        <div>
-          {messages.map((message) => (
-            <div key={message.$id} className="message--wrapper">
-              <div className={"message--header"}>
-                <small className={"message-timestamp"}>
-                  {new Date(message.$createdAt).toLocaleString()}
-                </small>
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <div>
+            {messages.map((message) => (
+              <div key={message.$id} className="message--wrapper">
+                <div className={"message--header"}>
+                  <small className={"message-timestamp"}>
+                    {new Date(message.$createdAt).toLocaleString()}
+                  </small>
 
-                <Trash2
-                  className={"delete--btn"}
-                  onClick={() => {
-                    deleteMessage(message.$id);
-                  }}
-                />
+                  <Trash2
+                    className={"delete--btn"}
+                    onClick={() => {
+                      deleteMessage(message.$id);
+                    }}
+                  />
+                </div>
+                <div className={"message--body"}>
+                  <span>{message.body}</span>
+                </div>
               </div>
-              <div className={"message--body"}>
-                <span>{message.body}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );
