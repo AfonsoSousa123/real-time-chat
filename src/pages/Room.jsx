@@ -5,12 +5,17 @@ import client, {
   databases,
 } from "../appwriteConfig.js";
 import { ID, Query } from "appwrite";
+
 import { Trash2 } from "react-feather";
+import Header from "../components/Header.jsx";
+import Notification from "../components/Notification.jsx";
 
 const Room = () => {
   const [messages, setMessages] = useState([]);
   const [messageBody, setMessageBody] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [toggleAlert, setToggleAlert] = useState(false);
 
   useEffect(() => {
     // fetches the messages
@@ -95,6 +100,8 @@ const Room = () => {
 
   return (
     <main className={"container"}>
+      <Header />
+
       <div className="room--container">
         <form onSubmit={handleSubmit} id={"message--form"}>
           <div>

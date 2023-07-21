@@ -43,9 +43,10 @@ body{
 }
 
 .form--wrapper{
-  width: 600px;
-  width: 600px;
-  padding: 2em;
+  background-color: var(--secondaryBgColor);
+  border-radius: 20px;
+  width: 700px;
+  padding: 4em;
 }
 
 .field--wrapper{
@@ -54,8 +55,6 @@ body{
   gap: 1em;
   padding: 0.5em 0;
 }
-
-
 
 /* Form Input Styling */
 

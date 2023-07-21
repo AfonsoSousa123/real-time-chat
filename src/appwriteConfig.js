@@ -1,14 +1,15 @@
 import { Account, Client, Databases } from "appwrite";
 
-export const PROJECT_ID = "64b7ebd3b63ba7a74165";
-export const DATABASE_ID = "64b7ef6fbc5aba634599";
-export const COLLECTION_ID_MESSAGES = "64b7ef7d66e0e815d045";
+export const PROJECT_ID = import.meta.env.VITE_PROJECT;
+export const DATABASE_ID = import.meta.env.VITE_DATABASE_ID;
+export const COLLECTION_ID_MESSAGES = import.meta.env
+  .VITE_COLLECTION_ID_MESSAGES;
 
 const client = new Client();
 
 client
-  .setEndpoint("https://cloud.appwrite.io/v1")
-  .setProject("64b7ebd3b63ba7a74165");
+  .setEndpoint(import.meta.env.VITE_ENDPOINT)
+  .setProject(import.meta.env.VITE_PROJECT);
 
 export const databases = new Databases(client);
 export const account = new Account(client);
