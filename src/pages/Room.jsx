@@ -81,7 +81,7 @@ const Room = () => {
 
     // Sets the message body
     setMessageBody("");
-    console.log("Created", response);
+    // console.log("Created", response);
   };
   const getMessages = async () => {
     // Get the messages
