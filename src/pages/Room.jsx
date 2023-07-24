@@ -4,18 +4,20 @@ import client, {
   COLLECTION_ID_MESSAGES,
   databases,
 } from "../appwriteConfig.js";
-import { ID, Query } from "appwrite";
+import { ID, Permission, Query, Role } from "appwrite";
 
 import { Trash2 } from "react-feather";
 import Header from "../components/Header.jsx";
-import Notification from "../components/Notification.jsx";
+import { useAuth } from "../utils/AuthContext.jsx";
 
 const Room = () => {
   const [messages, setMessages] = useState([]);
   const [messageBody, setMessageBody] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [toggleAlert, setToggleAlert] = useState(false);
+  // const [error, setError] = useState("");
+  // const [toggleAlert, setToggleAlert] = useState(false);
+
+  const { user } = useAuth();
 
   useEffect(() => {
     // fetches the messages
@@ -60,7 +62,13 @@ const Room = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    let payload = { body: messageBody };
+    let payload = {
+      user_id: user.$id,
+      username: user.name,
+      body: messageBody,
+    };
+
+    let permissions = [Permission.write(Role.user(user.$id))];
 
     // Sends the message
     let response = await databases.createDocument(
@@ -68,14 +76,12 @@ const Room = () => {
       COLLECTION_ID_MESSAGES,
       ID.unique(),
       payload,
+      permissions,
     );
-    // console.log("Created!", response);
-
-    // Updates the state of the messages
-    // setMessages((prevState) => [response, ...messages]);
 
     // Sets the message body
     setMessageBody("");
+    console.log("Created", response);
   };
   const getMessages = async () => {
     // Get the messages
@@ -132,16 +138,28 @@ const Room = () => {
             {messages.map((message) => (
               <div key={message.$id} className="message--wrapper">
                 <div className={"message--header"}>
-                  <small className={"message-timestamp"}>
-                    {new Date(message.$createdAt).toLocaleString()}
-                  </small>
+                  <p>
+                    {message.username ? (
+                      <span className={""}>{message.username}</span>
+                    ) : (
+                      <span className={""}>Anounymous user</span>
+                    )}
 
-                  <Trash2
-                    className={"delete--btn"}
-                    onClick={() => {
-                      deleteMessage(message.$id);
-                    }}
-                  />
+                    <small className={"message-timestamp"}>
+                      {new Date(message.$createdAt).toLocaleString()}
+                    </small>
+                  </p>
+
+                  {message.$permissions.includes(
+                    `delete("user:${user.$id}")`,
+                  ) && (
+                    <Trash2
+                      className={"delete--btn"}
+                      onClick={() => {
+                        deleteMessage(message.$id);
+                      }}
+                    />
+                  )}
                 </div>
                 <div className={"message--body"}>
                   <span>{message.body}</span>

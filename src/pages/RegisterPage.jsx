@@ -7,8 +7,8 @@ const RegisterPage = () => {
   const navigate = useNavigate();
 
   const [credentials, setCredentials] = useState({
-    email: "",
     name: "",
+    email: "",
     password1: "",
     password2: "",
   });

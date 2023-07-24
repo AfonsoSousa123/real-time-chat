@@ -40,6 +40,7 @@ export const AuthProvider = ({ children }) => {
       navigate("/");
     } catch (error) {
       console.info(error);
+      alert("Invalid Credentials!");
     }
   };
 
@@ -58,8 +59,8 @@ export const AuthProvider = ({ children }) => {
       let response = await account.create(
         ID.unique(),
         credentials.email,
-        credentials.name,
         credentials.password1,
+        credentials.name,
       );
 
       await account.createEmailSession(
@@ -68,10 +69,12 @@ export const AuthProvider = ({ children }) => {
       );
       const accountDetails = await account.get();
       setUser(accountDetails);
+      // console.log(response);
 
       navigate("/");
     } catch (error) {
       console.error(error);
+      alert(error);
     }
   };
 
